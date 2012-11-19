@@ -2,7 +2,6 @@
   "name": "sanity",
   "description": "A tool designed to sanity check settings before running your node.js application.",
   "homepage": "https://github.com/adamyanalunas/sanity",
-  "private": true,
   "dependencies": {
     "lodash": "0.10.x"
   },
