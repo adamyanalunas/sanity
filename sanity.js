@@ -1,7 +1,8 @@
 'use strict';
 
 var _ = require('lodash'),
-    os = require('os');
+    os = require('os'),
+    colors = require('colors');
 
 var sanity = {
   reporter: function(report) {
@@ -21,11 +22,12 @@ var sanity = {
   check: function(required, source, options, cb) {
     var failures = [],
         source = source || process.env,
-        message = '',
-        options = options || {
+        message = '';
+        options = _.extend({
           gagged: false,
-          passiveAggressive: false
-        };
+          passiveAggressive: false,
+          zazz: true
+        }, options);
 
     required.forEach(function(key) {
       var matcher = sanity.matchers.defined;
@@ -41,9 +43,10 @@ var sanity = {
     });
 
     if(failures.length > 0) {
-      var errs = ['ERROR: Required settings are not correct!'];
+      var heading = 'ERROR: Required settings are not correct!',
+          errs = [(options.zazz ? heading.red : heading)];
       failures.forEach(function(failure) {
-        errs.push('  ' + failure.key + ': ' + failure.value);
+        errs.push('  ' + (options.zazz ? failure.key.bold : failure.key) + ': ' + failure.value);
       });
 
       message = errs.join(os.EOL);

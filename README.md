@@ -8,6 +8,17 @@ Sanity is a small script designed to sanity check settings before running your n
 
 ## Usage
 
+Here's the signature for sanity:
+
+``` js
+sanity.check(
+  ['array', 'of', 'keys'],
+  /* optional data source {gein: 'clown'}, */
+  /* optional configuration object: {passiveAggressive: true}, */
+  /* optional callback: function(err, keys){ if(err) alert(keys.join(', ')); } */
+)
+```
+
 Check environment variables are set to a non-empty string value
 
 ``` js
@@ -95,6 +106,14 @@ sanity.check(['UFOS'], null, null, function(err, keys) {
 });
 
 ```
+
+## Configuration
+
+There are a few options to change how sanity behaves.
+
+* gagged: Truthy value prevents the reporter from being called. Could be useful in test environments.
+* passiveAggressive: If truthy and no callback provided this prevents sanity from running `process.exit(1)` when errors are found.
+* zazz: Falsy value stops the reported text from looking zazzy.
 
 ## Tests
 
