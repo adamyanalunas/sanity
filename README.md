@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Sanity
 
 Sanity is a small script designed to sanity check settings before running your node.js application. Check for values in the environment or specific objects using provided or custom matchers. If the matcher return true, the value is considered passing. Any non-passing values are reported by printing to the output or via a callback function.
@@ -94,6 +93,8 @@ sanity.check(['UFOS'], null, null, function(err, keys) {
   console.log(keys) // Array of keys which did not pass
   process.exit(1);
 });
+
+```
 
 ## Tests
 
