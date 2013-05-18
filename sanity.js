@@ -24,9 +24,9 @@ var sanity = {
         message = '';
         options = _.extend({
           gagged: false,
+          goodBook: null,
           passiveAggressive: false,
           recover: null,
-          goodBook: null,
           source: process.env,
           zazz: true
         }, options);

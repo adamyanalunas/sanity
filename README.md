@@ -12,11 +12,18 @@ Here's the signature for sanity:
 
 ``` js
 sanity.check(
-  ['array', 'of', 'keys'],
-  /* optional data source {gein: 'clown'}, */
-  /* optional configuration object: {passiveAggressive: true}, */
-  /* optional callback: function(err, keys){ if(err) alert(keys.join(', ')); } */
-)
+  ['array', 'of', 'keys']
+  // Options
+  ,
+  {
+    gagged: false, // "true" will prevent any output
+    goodBook: null, // Provide an object literal to set default values to "source"
+    passiveAggressive: false, // "true" will not stop app if validation fails
+    recover: null, // If a function is provided it is called if validation fails
+    source: process.env, // Want to configure another object? Stick it in here. e.g. {gein: 'clown'}
+    zazz: true // "false" will show everyone you're a boring person
+  }
+);
 ```
 
 Check environment variables are set to a non-empty string value
@@ -67,14 +74,18 @@ ERROR: Required settings are not correct!
 Provide a key/value data source to use other than environment variables
 
 ``` js
-var sanity = require('sanity');
+var sanity = require('sanity'),
+    source = {
+      GOTTI_BURIAL_LOCATION: app.unveilTruth('gotti'),
+      UNDERCOVER_AGENT: db.get('user', 'type = "undercover"')
+    };
 
 sanity.check(
   ['GOTTI_BURIAL_LOCATION', 'UNDERCOVER_AGENT'],
   {
-    GOTTI_BURIAL_LOCATION: app.unveilTruth('gotti'),
-    UNDERCOVER_AGENT: db.get('user', 'type = "undercover"')
-  });
+    source: source
+  }
+);
 
 // Theoretical output
 ERROR: Required settings are not correct!
@@ -84,12 +95,13 @@ ERROR: Required settings are not correct!
 Define what happens if values are matches are not true
 
 ``` js
-var sanity = require('sanity');
+var sanity = require('sanity'),
+    options = {
+      gagged: true, // default: false
+      passiveAggressive: true // default: false
+    };
 
-sanity.check(['ONE_ARMED_MAN'], null, {
-  gagged: true, // default: false
-  passiveAggressive: true // default: false
-});
+sanity.check(['ONE_ARMED_MAN'], options);
 
 // ONE_ARMED_MAN is falsy but `gagged` prevents logging and `passiveAggressive` does not exit the process
 ```
@@ -97,13 +109,16 @@ sanity.check(['ONE_ARMED_MAN'], null, {
 Supply a callback if you want to control the application flow after checking
 
 ``` js
-var sanity = require('sanity');
+var sanity = require('sanity'),
+    options = {
+      recover: function(err, keys) {
+        console.error(err); // Same error format as seen before
+        console.log(keys) // Array of keys which did not pass
+        process.exit(1);
+      }
+    };
 
-sanity.check(['UFOS'], null, null, function(err, keys) {
-  console.error(err); // Same error format as seen before
-  console.log(keys) // Array of keys which did not pass
-  process.exit(1);
-});
+sanity.check(['UFOS'], opttions);
 
 ```
 
@@ -112,11 +127,14 @@ sanity.check(['UFOS'], null, null, function(err, keys) {
 There are a few options to change how sanity behaves.
 
 * gagged: Truthy value prevents the reporter from being called. Could be useful in test environments.
+* goodBook: An object literal that, if provided, is used automatically to prepopulate the `source`.
 * passiveAggressive: If truthy and no callback provided this prevents sanity from running `process.exit(1)` when errors are found.
+* recover(message, failedKeys): A funciton that is invoked if validation fails.
+* source: Defaults to `process.env` but you can provide any source against which to test keys.
 * zazz: Falsy value stops the reported text from looking zazzy.
 
 ## Tests
 
 To run the tests make sure you have [jasmine-node](https://github.com/mhevery/jasmine-node) installed globally, then run this command from the `sanity` folder you cloned into:
 
-    jasmine-node test/
+    npm test
