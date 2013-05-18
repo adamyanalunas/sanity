@@ -1,4 +1,5 @@
-var sanity = require('../sanity.js'),
+var _ = require('lodash'),
+    sanity = require('../sanity').sanity,
     sinon = require('sinon'),
     os = require('os');
 
@@ -17,17 +18,20 @@ describe('Matchers', function() {
 describe('Sanity', function() {
   var callback = sinon.spy(),
       reporterStub = null,
+      preachStub = null,
       exitStub = null,
       headingMessage = 'ERROR: Required settings are not correct!'.red + os.EOL;
 
   beforeEach(function() {
     reporterStub = sinon.stub(sanity, 'reporter');
+    preachStub = sinon.stub(sanity, 'preach');
     exitStub = sinon.stub(process, 'exit');
   });
 
   afterEach(function() {
     callback.reset();
     reporterStub.restore();
+    preachStub.restore();
     exitStub.restore();
   });
 
@@ -41,7 +45,7 @@ describe('Sanity', function() {
     });
 
     it('uses plain text if styles are configured off', function() {
-      sanity.check(['BOREDOM'], null, {zazz: false});
+      sanity.check(['BOREDOM'], {zazz: false});
 
       var actual = reporterStub.getCall(0).args[0],
           expected = 'ERROR: Required settings are not correct!' + os.EOL + '  BOREDOM: undefined';
@@ -105,7 +109,8 @@ describe('Sanity', function() {
 
   describe('Alternate key/value source', function() {
     it('uses provided data for value lookup on keys', function() {
-      sanity.check(['ANGLE', {key: 'DANGLE', matcher: 'truthy'}], {ANGLE: '27 degrees', DANGLE: true});
+      var source = {ANGLE: '27 degrees', DANGLE: true};
+      sanity.check(['ANGLE', {key: 'DANGLE', matcher: 'truthy'}], {source: source});
 
       expect(reporterStub.callCount).toBe(0);
     });
@@ -113,13 +118,18 @@ describe('Sanity', function() {
 
   describe('Callback', function() {
     it('gets fired if provided', function() {
-      sanity.check(['JUSTICE'], {JUSTICE: 'blind'}, null, callback);
+      var options = {
+        source: {JUSTICE: 'blind'},
+        recover: callback
+      };
+      sanity.check(['JUSTICE'], options);
 
       expect(callback.callCount).toBe(1);
       expect(callback.getCall(0).args).toEqual([null, []]);
       expect(exitStub.callCount).toBe(0);
     });
 
+    // TODO: Fix
     xit('recieves error message and bad keys if matches fail', function() {
       sanity.check(['ZIM', 'GIR'], null, null, callback);
 
@@ -131,19 +141,55 @@ describe('Sanity', function() {
 
   describe('Configuration options', function() {
     it('mutes output if gag applied', function() {
-      sanity.check(['LOTION'], null, {gagged: true});
+      sanity.check(['LOTION'], {gagged: true});
 
       expect(reporterStub.callCount).toBe(0);
       expect(exitStub.callCount).toBe(1);
       expect(exitStub.getCall(0).args).toEqual([1]);
     });
 
+    // TODO: Fix
     xit('does not kill app if passive aggressive', function() {
-      sanity.check(['HOWARD_HUGHES'], null, {passiveAggressive: true});
+      sanity.check(['HOWARD_HUGHES'], {passiveAggressive: true});
 
       expect(reporterStub.callCount).toBe(1);
       expect(reporterStub.getCall(0).args).toEqual([headingMessage + '  HOWARD_HUGHES: undefined']);
       expect(exitStub.callCount).toBe(0);
+    });
+
+    it('preaches if given the good books', function() {
+      var source = {},
+          options = {
+            goodBook: {
+              'MEANING_OF_LIFE': 42
+            },
+            source: source
+          };
+
+      sanity.check(['MEANING_OF_LIFE'], options);
+
+      expect(preachStub.callCount).toBe(1);
+      expect(preachStub.alwaysCalledWithExactly(options.goodBook, options.source)).toBeTruthy();
+    });
+  });
+
+  describe('Preach', function() {
+    beforeEach(function() {
+      preachStub.restore();
+    });
+
+    it('assigns dictionary to source', function() {
+      var source = {},
+          sermon = {
+            'fanny': 'pack',
+            'Lemmy': 'God'
+          };
+
+      var result = sanity.preach(sermon, source);
+
+      expect(_.keys(result).length).toBe(2);
+      expect(result.fanny).toEqual('pack');
+      expect(result.Lemmy).toEqual('God');
     });
   });
 });

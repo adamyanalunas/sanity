@@ -7,8 +7,8 @@
     "colors": "0.6.x"
   },
   "devDependencies": {
-    "jasmine-node": "1.0.x",
-    "sinon": "1.5.x"
+    "jasmine-node": "1.7.x",
+    "sinon": "1.7.x"
   },
   "keywords": ["util", "functional", "server", "sanity"],
   "author": "Adam Yanalunas <adam@yanalunas.com>",
@@ -16,6 +16,9 @@
     "type": "git",
     "url": "git://github.com/adamyanalunas/sanity.git"
   },
+  "scripts": {
+    "test": "jasmine-node test/"
+  },
   "main": "sanity.js",
-  "version": "0.1.1"
+  "version": "0.2.0"
 }

@@ -19,15 +19,21 @@ var sanity = {
       return !!value === false;
     }
   },
-  check: function(required, source, options, cb) {
+  check: function(required, options) {
     var failures = [],
-        source = source || process.env,
         message = '';
         options = _.extend({
           gagged: false,
           passiveAggressive: false,
+          recover: null,
+          goodBook: null,
+          source: process.env,
           zazz: true
         }, options);
+
+    if (options.goodBook) {
+      sanity.preach(options.goodBook, options.source);
+    }
 
     required.forEach(function(key) {
       var matcher = sanity.matchers.defined;
@@ -37,8 +43,8 @@ var sanity = {
         key = key.key;
       }
 
-      if(matcher(source[key]) !== true) {
-        failures.push({key: key, value: source[key]});
+      if(matcher(options.source[key]) !== true) {
+        failures.push({key: key, value: options.source[key]});
       }
     });
 
@@ -56,19 +62,28 @@ var sanity = {
       }
     }
 
-    if(typeof cb === 'function') {
+    if(typeof options.recover === 'function') {
       var failedKeys = failures.map(function(entry) {
           return entry.key;
         });
-      return cb(message !== '' ? message : null, failedKeys);
+      return options.recover(message !== '' ? message : null, failedKeys);
     }
 
     if(!options.passiveAggressive && failures.length > 0) {
       process.exit(1);
     }
+  },
+  preach: function(insights, audience) {
+    _.forEach(insights, function(commandment, word) {
+      audience[word] = commandment;
+    });
+
+    return audience;
   }
 };
 
+exports.sanity = sanity;
 exports.check = sanity.check;
 exports.reporter = sanity.reporter;
 exports.matchers = sanity.matchers;
+exports.preach = sanity.preach;
