@@ -10,12 +10,7 @@
     "jasmine-node": "1.7.x",
     "sinon": "1.7.x"
   },
-  "keywords": [
-    "util",
-    "functional",
-    "server",
-    "sanity"
-  ],
+  "keywords": ["util", "functional", "server", "sanity"],
   "author": "Adam Yanalunas <adam@yanalunas.com>",
   "repository": {
     "type": "git",
