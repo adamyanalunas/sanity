@@ -3,14 +3,19 @@
   "description": "A tool designed to sanity check settings before running your node.js application.",
   "homepage": "https://github.com/adamyanalunas/sanity",
   "dependencies": {
-    "lodash": "0.10.x",
-    "colors": "0.6.x"
+    "colors": "0.6.x",
+    "lodash": "^4.13.1"
   },
   "devDependencies": {
     "jasmine-node": "1.7.x",
     "sinon": "1.7.x"
   },
-  "keywords": ["util", "functional", "server", "sanity"],
+  "keywords": [
+    "util",
+    "functional",
+    "server",
+    "sanity"
+  ],
   "author": "Adam Yanalunas <adam@yanalunas.com>",
   "repository": {
     "type": "git",

@@ -1,6 +1,8 @@
 'use strict';
 
-var _ = require('lodash'),
+var assign = require('lodash/assign'),
+    forEach = require('lodash/forEach'),
+    isEmpty = require('lodash/isEmpty'),
     os = require('os'),
     colors = require('colors');
 
@@ -10,7 +12,7 @@ var sanity = {
   },
   matchers: {
     defined: function(value) {
-      return !_.isEmpty(value);
+      return !isEmpty(value);
     },
     truthy: function(value) {
       return !!value;
@@ -22,7 +24,7 @@ var sanity = {
   check: function(required, options) {
     var failures = [],
         message = '';
-        options = _.extend({
+        options = assign({
           gagged: false,
           goodBook: null,
           passiveAggressive: false,
@@ -74,7 +76,7 @@ var sanity = {
     }
   },
   preach: function(insights, audience) {
-    _.forEach(insights, function(commandment, word) {
+    forEach(insights, function(commandment, word) {
       audience[word] = commandment;
     });
 
