@@ -4,7 +4,7 @@ var assign = require('lodash/assign'),
     forEach = require('lodash/forEach'),
     isEmpty = require('lodash/isEmpty'),
     os = require('os'),
-    colors = require('colors');
+    colors = require('colors/safe');
 
 var sanity = {
   reporter: function(report) {
@@ -52,9 +52,9 @@ var sanity = {
 
     if(failures.length > 0) {
       var heading = 'ERROR: Required settings are not correct!',
-          errs = [(options.zazz ? heading.red : heading)];
+          errs = [(options.zazz ? colors.red(heading) : heading)];
       failures.forEach(function(failure) {
-        errs.push('  ' + (options.zazz ? failure.key.bold : failure.key) + ': ' + failure.value);
+        errs.push('  ' + (options.zazz ? colors.bold(failure.key) : failure.key) + ': ' + failure.value);
       });
 
       message = errs.join(os.EOL);

@@ -1,7 +1,8 @@
 var _ = require('lodash'),
+    colors = require('colors/safe'),
     sanity = require('../sanity').sanity,
     sinon = require('sinon'),
-    os = require('os');
+    EOL = require('os').EOL;
 
 describe('Matchers', function() {
   it('has all presets', function() {
@@ -20,7 +21,7 @@ describe('Sanity', function() {
       reporterStub = null,
       preachStub = null,
       exitStub = null,
-      headingMessage = 'ERROR: Required settings are not correct!'.red + os.EOL;
+      headingMessage = 'ERROR: Required settings are not correct!';
 
   beforeEach(function() {
     reporterStub = sinon.stub(sanity, 'reporter');
@@ -40,7 +41,7 @@ describe('Sanity', function() {
       sanity.check(['ROOFIES']);
 
       var actual = reporterStub.getCall(0).args[0],
-          expected = 'ERROR: Required settings are not correct!'.red + os.EOL + '  ' + 'ROOFIES'.bold + ': undefined';
+          expected = colors.red(headingMessage) + EOL + '  ' + colors.bold('ROOFIES') + ': undefined';
       expect(actual).toEqual(expected);
     });
 
@@ -48,7 +49,7 @@ describe('Sanity', function() {
       sanity.check(['BOREDOM'], {zazz: false});
 
       var actual = reporterStub.getCall(0).args[0],
-          expected = 'ERROR: Required settings are not correct!' + os.EOL + '  BOREDOM: undefined';
+          expected = headingMessage + EOL + '  BOREDOM: undefined';
       expect(actual).toEqual(expected);
     });
   });
@@ -64,7 +65,7 @@ describe('Sanity', function() {
       sanity.check(['SOUL', 'HEART']);
 
       expect(reporterStub.callCount).toBe(1);
-      expect(reporterStub.getCall(0).args).toEqual([headingMessage + '  ' + 'SOUL'.bold + ': undefined' + os.EOL + '  ' + 'HEART'.bold + ': undefined']);
+      expect(reporterStub.getCall(0).args).toEqual([colors.red(headingMessage) + EOL + '  ' + colors.bold('SOUL') + ': undefined' + EOL + '  ' + colors.bold('HEART') + ': undefined']);
       expect(exitStub.callCount).toBe(1);
       expect(exitStub.getCall(0).args).toEqual([1]);
     });
@@ -134,7 +135,7 @@ describe('Sanity', function() {
       sanity.check(['ZIM', 'GIR'], null, null, callback);
 
       expect(callback.callCount).toBe(1);
-      expect(callback.getCall(0).args).toEqual([headingMessage + '  ZIM: undefined' + os.EOL + '  GIR: undefined', ['ZIM', 'GIR']]);
+      expect(callback.getCall(0).args).toEqual([color.red(headingMessage) + EOL + '  ZIM: undefined' + EOL + '  GIR: undefined', ['ZIM', 'GIR']]);
       expect(exitStub.callCount).toBe(0);
     });
   });
@@ -153,7 +154,7 @@ describe('Sanity', function() {
       sanity.check(['HOWARD_HUGHES'], {passiveAggressive: true});
 
       expect(reporterStub.callCount).toBe(1);
-      expect(reporterStub.getCall(0).args).toEqual([headingMessage + '  HOWARD_HUGHES: undefined']);
+      expect(reporterStub.getCall(0).args).toEqual([color.red(headingMessage) + EOL + '  HOWARD_HUGHES: undefined']);
       expect(exitStub.callCount).toBe(0);
     });
 
