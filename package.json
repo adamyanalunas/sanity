@@ -3,8 +3,8 @@
   "description": "A tool designed to sanity check settings before running your node.js application.",
   "homepage": "https://github.com/adamyanalunas/sanity",
   "dependencies": {
-    "lodash": "0.10.x",
-    "colors": "0.6.x"
+    "colors": "^1.1.2",
+    "lodash": "^4.13.1"
   },
   "devDependencies": {
     "jasmine-node": "1.7.x",
